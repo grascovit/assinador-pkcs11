@@ -20,7 +20,7 @@ Requisitos:
     Linux : /usr/lib/libeTPkcs11.so
     ```
 
-2. Execute o arquivo JAR pelo comando:
+2. Faça download e execute o [arquivo JAR](https://github.com/grascovit/assinador/releases/download/1.0-SNAPSHOT/assinador-1.0-SNAPSHOT.jar) pelo comando:
 `java -jar caminho_para_o_.jar caminho_para_arquivo_config senha_do_token_ou_cartao`
 3. Selecione um ou mais arquivos que deseja assinar
 4. Selecione a pasta onde ficarão os arquivos assinados
