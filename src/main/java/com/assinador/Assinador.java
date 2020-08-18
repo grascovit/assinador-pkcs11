@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Assinador {
     private static String configFilePath = null;
@@ -41,7 +43,13 @@ public class Assinador {
         }
     }
 
-    private static void signFile(File file, String destinationFolder) {
+    private static boolean signFile(File file, String destinationFolder) {
+        if (file.length() >= 2000000) {
+            JOptionPane.showMessageDialog(null, file.getName() + " é maior que o tamanho permitido de 2MB");
+
+            return false;
+        }
+
         try {
             ArrayList<X509Certificate> certificates = new ArrayList<X509Certificate>();
             CMSTypedData content = new CMSProcessableFile(file);
@@ -63,8 +71,12 @@ public class Assinador {
             fileOuputStream.write(signedData.getEncoded());
             fileOuputStream.flush();
             fileOuputStream.close();
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+
+            return false;
         }
     }
 
@@ -82,13 +94,33 @@ public class Assinador {
         folderChooser.setDialogTitle("Selecione a pasta onde ficarão os arquivos assinados");
         folderChooser.showSaveDialog(null);
         String destinationFolder = folderChooser.getSelectedFile().getAbsolutePath();
+        HashMap<File, Boolean> result = new HashMap<File, Boolean>();
+        StringBuilder resultMessage = new StringBuilder();
+        StringBuilder successfullySigned = new StringBuilder();
+        StringBuilder failures = new StringBuilder();
 
         initializeProvider();
 
         for (File file : files) {
-            signFile(file, destinationFolder);
+            result.put(file, signFile(file, destinationFolder));
         }
 
-        JOptionPane.showMessageDialog(null, files.length + " arquivo(s) assinado(s) com sucesso!");
+        for (Map.Entry<File, Boolean> entry : result.entrySet()) {
+            if (entry.getValue()) {
+                successfullySigned.append(entry.getKey().getName()).append("\n");
+            } else {
+                failures.append(entry.getKey().getName()).append("\n");
+            }
+        }
+
+        if (successfullySigned.length() > 0) {
+            resultMessage.append("Assinados com sucesso:\n").append(successfullySigned).append("\n");
+        }
+
+        if (failures.length() > 0) {
+            resultMessage.append("Falha ao assinar:\n").append(failures).append("\n");
+        }
+
+        JOptionPane.showMessageDialog(null, resultMessage.toString(), "Resultado", JOptionPane.INFORMATION_MESSAGE);
     }
 }
