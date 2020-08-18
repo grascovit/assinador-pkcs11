@@ -34,7 +34,7 @@ public class Assinador {
             SunPKCS11 provider = new SunPKCS11(configFilePath);
             Security.removeProvider(provider.getName());
             Security.addProvider(provider);
-            keyStore = KeyStore.getInstance("PKCS11");
+            keyStore = KeyStore.getInstance("PKCS11", provider);
             keyStore.load(null, password.toCharArray());
             alias = keyStore.aliases().nextElement();
             System.out.println(alias);
