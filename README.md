@@ -13,6 +13,7 @@ Requisitos:
     ```text
     name=OpenSC
     library=/usr/local/lib/libeTPkcs11.dylib
+    showInfo=true
     ```
 
     O caminho varia de acordo com o sistema operacional e a fabricante do token.
